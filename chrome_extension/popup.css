@@ -1,0 +1,320 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 450px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 12px;
+}
+
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.header h1 {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.header p {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.status-section {
+    background: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-dot.online {
+    background: #22c55e;
+}
+
+.status-dot.offline {
+    background: #ef4444;
+}
+
+/* Mood Selection */
+.mood-section {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.mood-section h3 {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.mood-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.mood-btn {
+    padding: 10px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.mood-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.mood-btn.active {
+    border-color: #667eea;
+    background: #eef2ff;
+    color: #667eea;
+}
+
+.happy-btn { color: #fbbf24; }
+.sad-btn { color: #3b82f6; }
+.angry-btn { color: #ef4444; }
+.neutral-btn { color: #6b7280; }
+.surprise-btn { color: #ec4899; }
+
+/* Camera Toggle */
+.camera-toggle {
+    background: white;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-size: 12px;
+}
+
+.camera-toggle input[type="checkbox"] {
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+/* Camera Section */
+.camera-section {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#camera {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: #000;
+}
+
+#stopCameraBtn {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background: #ef4444;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Music Section */
+.music-section {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.music-section h3 {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.now-playing {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f9fafb;
+    border-radius: 6px;
+}
+
+.song-info p {
+    margin: 2px 0;
+    font-size: 12px;
+}
+
+#songTitle {
+    font-weight: 600;
+    color: #333;
+}
+
+#songArtist {
+    color: #999;
+    font-size: 11px;
+}
+
+.player-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.music-btn {
+    background: #667eea;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.music-btn:hover {
+    background: #5568d3;
+}
+
+/* Playlist */
+.playlist-section {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.playlist-section h3 {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.playlist {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.playlist-item {
+    padding: 8px;
+    background: #f9fafb;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+.playlist-item:hover {
+    background: #e5e7eb;
+}
+
+.playlist-item.active {
+    background: #dbeafe;
+    border-left: 3px solid #667eea;
+}
+
+.empty-message {
+    color: #999;
+    text-align: center;
+    font-size: 11px;
+    padding: 20px;
+}
+
+/* Custom Song Form */
+.custom-song-section {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.custom-song-section h3 {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.input-field {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 6px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 11px;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 4px rgba(102, 126, 234, 0.2);
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #333;
+}
+
+.playlist::-webkit-scrollbar {
+    width: 6px;
+}
+
+.playlist::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}

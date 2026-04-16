@@ -1,0 +1,17 @@
+﻿{
+  "manifest_version": 3,
+  "name": "Emotion-Based Music Player",
+  "version": "1.0.0",
+  "description": "AI-powered music player with mood selection and custom playlists",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:5000/*",
+    "http://127.0.0.1:5000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Emotion Music Player"
+  }
+}

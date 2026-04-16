@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Emotion Music Player</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Emotion Music</h1>
+            <p>Choose your mood & enjoy music</p>
+        </div>
+
+        <div class="status-section">
+            <div id="connectionStatus" class="connection-status">
+                <span id="apiStatus" class="status-dot offline"></span>
+                <span id="apiStatusText">API: Checking...</span>
+            </div>
+        </div>
+
+        <!-- Mood Selector -->
+        <div class="mood-section">
+            <h3>Select Your Mood</h3>
+            <div class="mood-buttons">
+                <button class="mood-btn happy-btn" data-mood="happy">😊 Happy</button>
+                <button class="mood-btn sad-btn" data-mood="sad">😢 Sad</button>
+                <button class="mood-btn angry-btn" data-mood="angry">😠 Angry</button>
+                <button class="mood-btn neutral-btn" data-mood="neutral">😐 Neutral</button>
+                <button class="mood-btn surprise-btn" data-mood="surprise">😲 Surprise</button>
+            </div>
+        </div>
+
+        <!-- Camera Option -->
+        <div class="camera-toggle">
+            <label>
+                <input type="checkbox" id="useCameraCheckbox">
+                Use Camera Detection
+            </label>
+        </div>
+
+        <div class="camera-section" id="cameraSection" style="display:none;">
+            <video id="camera" width="280" height="210" autoplay></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <button id="stopCameraBtn" class="btn btn-secondary">Stop Camera</button>
+        </div>
+
+        <!-- Now Playing -->
+        <div class="music-section">
+            <h3>Now Playing</h3>
+            <div id="nowPlaying" class="now-playing">
+                <div class="song-info">
+                    <p id="songTitle">Select a mood</p>
+                    <p id="songArtist">-</p>
+                </div>
+                <div class="player-controls">
+                    <button id="playBtn" class="music-btn" title="Play on YouTube">▶️</button>
+                    <button id="nextBtn" class="music-btn" title="Next Song">⏭️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playlist -->
+        <div class="playlist-section">
+            <h3>Your Mood Playlist</h3>
+            <div id="playlistContainer" class="playlist">
+                <p class="empty-message">Select a mood to load playlist</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

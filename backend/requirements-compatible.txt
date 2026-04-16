@@ -1,0 +1,12 @@
+Flask
+Flask-CORS
+opencv-python
+torch
+torchvision
+pillow
+numpy
+tensorflow
+keras
+gunicorn
+python-dotenv
+requests

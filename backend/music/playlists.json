@@ -1,0 +1,122 @@
+{
+  "happy": {
+    "description": "Energetic and uplifting songs",
+    "color": "#FFD700",
+    "songs": [
+      {
+        "title": "punjab wal nu",
+        "artist": "hustinder",
+        "duration": "3:20",
+        "url": "https://youtu.be/ikRy2Pki7Z4?si=bMgNaBAlxLKZ2CKs"
+      },
+      {
+        "title": "Good as Hell",
+        "artist": "Lizzo",
+        "duration": "4:17",
+        "url": "https://www.youtube.com/watch?v=SmbmeOgWG14"
+      },
+      {
+        "title": "Walking on Sunshine",
+        "artist": "Katrina & The Waves",
+        "duration": "3:43",
+        "url": "https://www.youtube.com/watch?v=iPUmE-tne5U"
+      }
+    ]
+  },
+  "sad": {
+    "description": "Calm and soothing songs",
+    "color": "#4169E1",
+    "songs": [
+      {
+        "title": "Someone Like You",
+        "artist": "Adele",
+        "duration": "4:45",
+        "url": "https://www.youtube.com/watch?v=hHUbLv4ThOo"
+      },
+      {
+        "title": "The Night We Met",
+        "artist": "Lord Huron",
+        "duration": "3:55",
+        "url": "https://www.youtube.com/watch?v=KrC1zZ6Twc0"
+      },
+      {
+        "title": "Skinny Love",
+        "artist": "Bon Iver",
+        "duration": "3:59",
+        "url": "https://www.youtube.com/watch?v=ssdgFoHLwnk"
+      }
+    ]
+  },
+  "angry": {
+    "description": "Relaxing and calming songs",
+    "color": "#FF6347",
+    "songs": [
+      {
+        "title": "Weightless",
+        "artist": "Marconi Union",
+        "duration": "8:00",
+        "url": "https://www.youtube.com/watch?v=jG1FaH7jJM8"
+      },
+      {
+        "title": "Clair de Lune",
+        "artist": "Claude Debussy",
+        "duration": "4:41",
+        "url": "https://www.youtube.com/watch?v=Js_p8HOAQ4Q"
+      },
+      {
+        "title": "Meditation",
+        "artist": "Zen Meditation",
+        "duration": "10:00",
+        "url": "https://www.youtube.com/watch?v=aA3Hc4S3VfE"
+      }
+    ]
+  },
+  "neutral": {
+    "description": "Balanced and normal tempo songs",
+    "color": "#808080",
+    "songs": [
+      {
+        "title": "Levitating",
+        "artist": "Dua Lipa",
+        "duration": "3:23",
+        "url": "https://www.youtube.com/watch?v=TUVcZfQe-Kw"
+      },
+      {
+        "title": "As It Was",
+        "artist": "Harry Styles",
+        "duration": "2:46",
+        "url": "https://www.youtube.com/watch?v=H5v3kKSFVzE"
+      },
+      {
+        "title": "Anti-Hero",
+        "artist": "Taylor Swift",
+        "duration": "3:21",
+        "url": "https://www.youtube.com/watch?v=r5quen1dFXo"
+      }
+    ]
+  },
+  "surprise": {
+    "description": "Uplifting and exciting songs",
+    "color": "#FF1493",
+    "songs": [
+      {
+        "title": "Can't Hold Us",
+        "artist": "Macklemore & Ryan Lewis",
+        "duration": "4:07",
+        "url": "https://www.youtube.com/watch?v=e-IWRmpefzE"
+      },
+      {
+        "title": "Uptown Funk",
+        "artist": "Mark Ronson ft. Bruno Mars",
+        "duration": "4:30",
+        "url": "https://www.youtube.com/watch?v=OPf0YbXqDm0"
+      },
+      {
+        "title": "Take On Me",
+        "artist": "a-ha",
+        "duration": "3:33",
+        "url": "https://www.youtube.com/watch?v=djV11Xbc914"
+      }
+    ]
+  }
+}
