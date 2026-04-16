@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Emotion Music Player",
+  "version": "1.0",
+  "description": "Play music based on emotion",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}
