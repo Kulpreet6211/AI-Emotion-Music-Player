@@ -1,74 +1,90 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Emotion Music Player</title>
-    <link rel="stylesheet" href="popup.css">
+  <meta charset="UTF-8">
+  <title>Emotion Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎵 Emotion Music</h1>
-            <p>Choose your mood & enjoy music</p>
-        </div>
 
-        <div class="status-section">
-            <div id="connectionStatus" class="connection-status">
-                <span id="apiStatus" class="status-dot offline"></span>
-                <span id="apiStatusText">API: Checking...</span>
-            </div>
-        </div>
+<main class="container">
 
-        <!-- Mood Selector -->
-        <div class="mood-section">
-            <h3>Select Your Mood</h3>
-            <div class="mood-buttons">
-                <button class="mood-btn happy-btn" data-mood="happy">😊 Happy</button>
-                <button class="mood-btn sad-btn" data-mood="sad">😢 Sad</button>
-                <button class="mood-btn angry-btn" data-mood="angry">😠 Angry</button>
-                <button class="mood-btn neutral-btn" data-mood="neutral">😐 Neutral</button>
-                <button class="mood-btn surprise-btn" data-mood="surprise">😲 Surprise</button>
-            </div>
-        </div>
+  <header class="header">
+    <img src="icons/headphones.png" alt="Emotion Player Logo" class="logo">
+    <h1>Emotion Player</h1>
+    <span id="statusBadge" class="status checking">Checking...</span>
+    <button id="openDashboard" class="dashboard-btn">
+      <img src="icons/dashboard.png" alt="Dashboard Icon">
+    </button>
+  </header>
 
-        <!-- Camera Option -->
-        <div class="camera-toggle">
-            <label>
-                <input type="checkbox" id="useCameraCheckbox">
-                Use Camera Detection
-            </label>
-        </div>
+<div class="moods">
 
-        <div class="camera-section" id="cameraSection" style="display:none;">
-            <video id="camera" width="280" height="210" autoplay></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <button id="stopCameraBtn" class="btn btn-secondary">Stop Camera</button>
-        </div>
+  <button class="mood-btn" data-mood="happy">
+    <img src="icons/happy.png">
+    <span>Happy</span>
+  </button>
 
-        <!-- Now Playing -->
-        <div class="music-section">
-            <h3>Now Playing</h3>
-            <div id="nowPlaying" class="now-playing">
-                <div class="song-info">
-                    <p id="songTitle">Select a mood</p>
-                    <p id="songArtist">-</p>
-                </div>
-                <div class="player-controls">
-                    <button id="playBtn" class="music-btn" title="Play on YouTube">▶️</button>
-                    <button id="nextBtn" class="music-btn" title="Next Song">⏭️</button>
-                </div>
-            </div>
-        </div>
+  <button class="mood-btn" data-mood="sad">
+    <img src="icons/sad.png">
+    <span>Sad</span>
+  </button>
 
-        <!-- Playlist -->
-        <div class="playlist-section">
-            <h3>Your Mood Playlist</h3>
-            <div id="playlistContainer" class="playlist">
-                <p class="empty-message">Select a mood to load playlist</p>
-            </div>
-        </div>
+  <button class="mood-btn" data-mood="angry">
+    <img src="icons/angry.png">
+    <span>Angry</span>
+  </button>
+
+  <button class="mood-btn" data-mood="neutral">
+    <img src="icons/neutral.png">
+    <span>Neutral</span>
+  </button>
+
+  <button class="mood-btn" data-mood="surprise">
+    <img src="icons/surprise.png">
+    <span>Surprise</span>
+  </button>
+
+</div>
+
+  <section class="camera-section">
+    <label>
+      <input type="checkbox" id="cameraToggle"> Auto Detect Mood
+    </label>
+
+    <div id="cameraBox" class="camera-box hidden">
+      <video id="video" autoplay></video>
+      <div class="overlay">Detecting...</div>
     </div>
+  </section>
 
-    <script src="popup.js"></script>
+  <section class="now-playing">
+    <h3>Now Playing</h3>
+    <div class="song-card">
+      <div>
+        <p id="songTitle"><strong>No song selected</strong></p>
+        <span id="songArtist" style="opacity:0.7;">---</span>
+      </div>
+
+      <div class="controls">
+        <button id="playBtn">
+          <img src="icons/play-button.png" alt="Play Icon">
+        </button>
+        <button id="nextBtn">
+          <img src="icons/play-next.png" alt="Next Icon">
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="playlist">
+    <h3>Playlist</h3>
+    <div id="playlistContainer"></div>
+  </section>
+
+</main>
+
+<script src="popup.js"></script>
 </body>
 </html>

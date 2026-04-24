@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Emotion Player Dashboard</title>
+
+  <link rel="stylesheet" href="dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body class="dashboard">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <img src="icons/headphones.png" alt="Emotion Player Logo" class="logo">
+    <h2>Emotion Player</h2>
+
+    <button class="tab-btn active" data-tab="home">
+      <img src="icons/homepage.png" alt="Home Icon" class="home-icon"> 
+      
+      <span>Home</span>
+    </button>
+
+    <button class="tab-btn" data-tab="analytics">
+      <img src="icons/analytics.png" alt="Analytics Icon" class="analytics-icon">
+      <span>Analytics</span>
+    </button>
+
+    <button class="tab-btn" data-tab="settings">
+    <img src="icons/setting.png" alt="Settings Icon" class="settings-icon">
+      <span>Settings</span>
+    </button>
+  </div>
+
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main">
+
+    <!-- ================= HOME ================= -->
+    <div id="home" class="tab-content active">
+
+      <h1>Now Playing</h1>
+
+      <div class="card now-playing">
+           <button id="themeToggleHome" class="theme-toggle">
+    🌙
+          </button>
+        <div>
+          <p id="songTitle">No song selected</p>
+          <span id="songArtist">---</span>
+
+          <!-- Progress -->
+          <div class="progress-container">
+            <div id="progressBar"></div>
+          </div>
+
+          <div class="time">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="playBtn">▶</button>
+          <button id="nextBtn">⏭</button>
+        </div>
+
+      </div>
+
+      <!-- Audio -->
+      <audio id="audioPlayer" preload="metadata"></audio>
+
+      <h2>Playlist</h2>
+      <div id="playlist" class="card"></div>
+
+    </div>
+
+
+    <!-- ================= ANALYTICS ================= -->
+    <div id="analytics" class="tab-content">
+      <h1>📈 Mood Analytics</h1>
+
+      <div class="card">
+        <p>Happy: 40%</p>
+        <p>Sad: 20%</p>
+        <p>Neutral: 30%</p>
+        <p>Angry: 10%</p>
+      </div>
+    </div>
+
+
+    <!-- ================= SETTINGS ================= -->
+    <div id="settings" class="tab-content">
+      <h1>⚙ Settings</h1>
+
+    <div class="card">
+  <label>
+    <input type="checkbox" id="autoDetect">
+    Enable Auto Detection
+  </label>
+
+  <br><br>
+
+  <button id="themeToggleSettings" class="btn-theme">
+    Toggle Theme
+  </button>
+
+  <br><br>
+
+  <button id="clearData">Clear History</button>
+</div>
+    </div>
+
+  </div>
+
+  <script src="dashboard.js"></script>
+
+</body>
+</html>
