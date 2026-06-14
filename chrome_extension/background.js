@@ -137,7 +137,7 @@ function showNotification() {
   chrome.notifications.create({
     type: "basic",
     iconUrl: "icons/icon128.png",
-    title: "Emotion Player",
+    title: "FeelFlow",
     message: "Do you want to rescan your mood?",
     buttons: [
       { title: "Yes" },

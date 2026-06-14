@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Emotion Player Dashboard</title>
+  <title>FeelFlow Dashboard</title>
 
   <link rel="stylesheet" href="dashboard.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
   <!-- ===== SIDEBAR ===== -->
   <div class="sidebar">
     <img src="icons/headphones.png" class="logo">
-    <h2>Emotion Player</h2>
+    <h2>FeelFlow</h2>
 
     <button class="tab-btn active" data-tab="home">
       <img src="icons/homepage.png" class="icon">
@@ -53,7 +53,10 @@
 
       <!-- NOW PLAYING CARD -->
       <div class="card player-card">
-        <h2>Now Playing</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h2 style="margin: 0;">Now Playing</h2>
+          <span id="playerSourceBadge" style="font-size: 11px; padding: 3px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: var(--text-muted); font-weight: 500;">Local Player</span>
+        </div>
 
         <div class="now-playing">
           <div class="song-info">
@@ -64,6 +67,7 @@
 
           <div class="controls">
             <button id="prevBtn">⏮</button>
+            <button id="playBtn">▶</button>
             <button id="nextBtn">⏭</button>
           </div>
         </div>
@@ -75,7 +79,12 @@
 
       <!-- PLAYLIST CARD (Height matched to Chart Card) -->
       <div class="card playlist-card">
-        <h2>Playlist</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h2 style="margin: 0;">Playlist</h2>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="refreshPlaylistBtn" title="Refresh song list" style="background: var(--accent); color: #fff; border: none; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">↻ Refresh Songs</button>
+          </div>
+        </div>
         <!-- Ensure #playlist in CSS has: max-height: 300px; overflow-y: auto; -->
         <div id="playlist">
           <!-- JS will inject song-items here -->
@@ -106,6 +115,7 @@
         <select id="languageSelect">
           <option value="punjabi" selected>Punjabi</option>
           <option value="hindi">Hindi</option>
+          <option value="english">English</option>
         </select>
       </div>
 
@@ -137,13 +147,18 @@
 <div id="settings" class="tab-content">
   <h1>⚙ Settings</h1>
 
-  <!-- ================= PLAYBACK =================
+  <!-- ================= PLAYBACK ================= -->
   <div class="card settings-card">
     <h3>🎵 Playback</h3>
 
     <label class="setting-row">
       <span>Auto Play</span>
       <input type="checkbox" id="autoPlay">
+    </label>
+
+    <label class="setting-row">
+      <span>Shuffle Playlist</span>
+      <input type="checkbox" id="shuffleToggle">
     </label>
 
     <label class="setting-row">
@@ -156,7 +171,6 @@
       <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
     </div>
   </div>
- -->
 
   <!-- ================= NOTIFICATIONS ================= -->
   <div class="card settings-card">
@@ -170,18 +184,53 @@
         <span class="slider-toggle"></span>
       </label>
     </div>
+  </div>
+
+
+  <!-- ================= DETECTOR OPTIONS ================= -->
+  <div class="card settings-card">
+    <h3>📷 Face Detection Options</h3>
 
     <div class="setting-row">
-      <span>Rescan Timer</span>
-      <input type="range" id="timeSlider" min="1" max="60" value="5">
+      <span>Selection Mode</span>
+      <select id="detectionModeSelect" style="padding: 6px 10px; border-radius: 8px; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--card-border); font-family: inherit; font-size: 13px; outline: none; cursor: pointer;">
+        <option value="focus" selected>Focus Center Face (Primary User)</option>
+        <option value="group">Group Mood Mode (Average Emotions)</option>
+      </select>
     </div>
 
-    <p>
-      Rescan every 
-      <strong><span id="timeValue">5</span></strong> minutes
+    <div class="setting-row">
+      <span>Smoothing Window</span>
+      <input type="range" id="smoothingSlider" min="1" max="10" value="3">
+    </div>
+
+    <p style="margin-top: 6px; font-size: 12px; opacity: 0.8;">
+      Smooth transitions over 
+      <strong><span id="smoothingValue">3</span></strong> frames
     </p>
   </div>
 
+
+  <!-- ================= SPOTIFY CONNECTION ================= -->
+  <div class="card settings-card">
+    <h3>🎵 Spotify Connection</h3>
+    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+      <div>
+        Status: <strong id="spotifyStatus" style="color: #ef4444;">Disconnected</strong>
+      </div>
+      <div id="spotifyDeviceInfo" style="display: none; color: var(--accent);">
+        Active Device: <span id="spotifyDeviceName" style="font-weight: 600;">None</span>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <button id="spotifyConnectBtn" style="background: #1db954; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s;">Connect Spotify</button>
+        <button id="spotifyDisconnectBtn" style="background: #ef4444; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; display: none;">Disconnect</button>
+      </div>
+      <label class="setting-row" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 8px; font-size: 13px;">
+        <span>Spotify AI Recommendations (Auto-generate)</span>
+        <input type="checkbox" id="spotifyAutoGenerate">
+      </label>
+    </div>
+  </div>
 
   <!-- ================= APPEARANCE ================= -->
   <div class="card settings-card">

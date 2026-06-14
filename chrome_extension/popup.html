@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Emotion Player</title>
+  <title>FeelFlow</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="popup.css">
 </head>
@@ -11,8 +11,8 @@
 <main class="container">
 
   <header class="header">
-    <img src="icons/headphones.png" alt="Emotion Player Logo" class="logo">
-    <h1>Emotion Player</h1>
+    <img src="icons/headphones.png" alt="FeelFlow Logo" class="logo">
+    <h1>FeelFlow</h1>
     <span id="statusBadge" class="status checking">Checking...</span>
     <button id="openDashboard" class="dashboard-btn">
       <img src="icons/dashboard.png" alt="Dashboard Icon">
@@ -48,19 +48,47 @@
 
 </div>
 
-  <section class="camera-section">
-    <label>
-      <input type="checkbox" id="cameraToggle" checked> Auto Detect Mood
-    </label>
-
-    <div id="cameraBox" class="camera-box hidden">
-      <video id="video" autoplay></video>
-
-      <!-- 🔥 FACE OVERLAY CANVAS -->
-      <canvas id="faceCanvas"></canvas>
-
-      <div class="overlay">Detecting...</div>
+  <section class="camera-section" style="margin-top: 10px; background: var(--card-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; color: var(--text-main);">
+        <span style="font-size: 16px;">📷</span> Auto Detect Mood:
+      </span>
+      <label class="switch">
+        <input type="checkbox" id="cameraToggle">
+        <span class="slider-toggle"></span>
+      </label>
     </div>
+
+    <div id="cameraBox" class="camera-box hidden" style="margin-top: 10px; position: relative; border-radius: 8px; overflow: hidden;">
+      <video id="video" autoplay style="width: 100%; display: block; border-radius: 8px;"></video>
+      <canvas id="faceCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+      <div class="overlay" style="position: absolute; bottom: 8px; left: 8px; font-size: 11px; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; color: #fff;">Detecting...</div>
+    </div>
+  </section>
+
+  <!-- ================= LANGUAGE SELECTOR ================= -->
+  <section class="language-section" style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px;">
+    <span style="font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; color: var(--text-main);">
+      <span style="font-size: 16px;">🌐</span> Language Preference:
+    </span>
+    <select id="languageSelect" style="padding: 6px 10px; border-radius: 8px; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--card-border); font-family: inherit; font-size: 12px; outline: none; cursor: pointer;">
+      <option value="punjabi" selected>Punjabi</option>
+      <option value="hindi">Hindi</option>
+      <option value="english">English</option>
+    </select>
+  </section>
+
+  <!-- ================= SPOTIFY CONNECTION ================= -->
+  <section class="spotify-section" style="margin-top: 10px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--card-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 16px;">🎵</span> Spotify: <strong id="spotifyPopupStatus" style="color: #ef4444;">Disconnected</strong>
+      </span>
+      <button id="spotifyPopupConnectBtn" style="background: #1db954; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Connect</button>
+    </div>
+    <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; opacity: 0.9; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="spotifyAutoGenerateToggle"> Spotify AI Recommendations (Auto-generate)
+    </label>
   </section>
 
   <section class="now-playing">
@@ -83,7 +111,12 @@
   </section>
 
   <section class="playlist">
-    <h3>Playlist</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <h3 style="margin: 0; color: var(--text-muted); font-size: 14px;">Playlist</h3>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <button id="refreshPlaylistBtn" title="Refresh song list" style="background: var(--accent); color: #fff; border: none; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">↻ Refresh</button>
+      </div>
+    </div>
     <div id="playlistContainer"></div>
   </section>
 
