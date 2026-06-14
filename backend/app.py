@@ -10,6 +10,10 @@ import json
 from dotenv import load_dotenv
 from datetime import datetime
 
+import numpy as np
+import cv2
+from flask import Flask, request, jsonify
+
 # Import emotion detector (mock initially, then CNN)
 from model.emotion_detector import EmotionDetector
 
@@ -87,26 +91,35 @@ def detect_emotion():
         }), 500
 
 # ==================== MUSIC RECOMMENDATION ====================
-@app.route('/playlist/<emotion>', methods=['GET'])
-def get_playlist(emotion):
+@app.route('/playlist/<language>/<emotion>', methods=['GET'])
+def get_playlist(language, emotion):
     """
     Get music playlist for detected emotion
     """
     try:
+        language = language.lower()
         emotion = emotion.lower()
-        
-        if emotion not in PLAYLISTS:
+
+          # Check language exists
+        if language not in PLAYLISTS:
             return jsonify({
-                'error': f'Emotion {emotion} not found',
-                'available_emotions': list(PLAYLISTS.keys())
-            }), 404
-        
-        playlist = PLAYLISTS[emotion]
+                'error': f'Language {language} not found',
+                'available_languages': list(PLAYLISTS.keys())
+                        }), 404
+
+                # Check emotion exists inside language
+        if emotion not in PLAYLISTS[language]:
+            return jsonify({
+                       'error': f'Emotion {emotion} not found for {language}',
+                        'available_emotions': list(PLAYLISTS[language].keys())
+                    }), 404
+
+        playlist = PLAYLISTS[language][emotion]
         
         return jsonify({
             'emotion': emotion,
             'playlist': playlist,
-            'song_count': len(playlist['songs']),
+            'song_count': len(playlist.get('songs', [])),
             'status': 'success'
         }), 200
         

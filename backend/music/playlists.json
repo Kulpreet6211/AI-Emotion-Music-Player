@@ -1,122 +1,166 @@
 {
-  "happy": {
-    "description": "Energetic and uplifting songs",
-    "color": "#FFD700",
-    "songs": [
-      {
-        "title": "punjab wal nu",
-        "artist": "hustinder",
-        "duration": "3:20",
-        "url": "https://youtu.be/ikRy2Pki7Z4?si=bMgNaBAlxLKZ2CKs"
-      },
-      {
-        "title": "ok hoye paye aa",
-        "artist": "arjan dhillon",
-        "duration": "4:17",
-        "url": "https://youtu.be/P9lIW5lPQV0?si=V84FuKEM-wQ4gRTw&t=10"
-      },
-      {
-        "title": "call me later",
-        "artist": "dulla",
-        "duration": "3:43",
-        "url": "https://youtu.be/xzbWWf7j-GU?si=15J5pNhSWJ8WTwNe&t=5"
-      }
-    ]
+  "punjabi": {
+    "happy": {
+      "description": "Energetic and uplifting songs",
+      "color": "#FFD700",
+      "songs": [
+        { "title": "Punjab Wal Nu", "artist": "Hustinder", "duration": "3:20", "url": "https://youtu.be/ikRy2Pki7Z4" },
+        { "title": "Ok Hoye Paye Aa", "artist": "Arjan Dhillon", "duration": "4:17", "url": "https://youtu.be/P9lIW5lPQV0" },
+        { "title": "Call Me Later", "artist": "Dulla", "duration": "3:43", "url": "https://youtu.be/xzbWWf7j-GU" },
+        { "title": "Excuses", "artist": "AP Dhillon", "duration": "2:56", "url": "https://youtu.be/vX2cDW8LUWk" },
+        { "title": "5 Taara", "artist": "Diljit Dosanjh", "duration": "3:10", "url": "https://youtu.be/mH09F9W8_9E" },
+        { "title": "High Rated Gabru", "artist": "Guru Randhawa", "duration": "3:34", "url": "https://youtu.be/hjWf8A0YNSE" },
+        { "title": "Suit", "artist": "Guru Randhawa", "duration": "3:20", "url": "https://youtu.be/uQ763Vvqi7w" },
+        { "title": "Na Ja", "artist": "Pav Dharia", "duration": "3:25", "url": "https://youtu.be/Q7vS92mS2O0" },
+        { "title": "Brown Munde", "artist": "AP Dhillon", "duration": "4:27", "url": "https://youtu.be/VNs_jkTDjtU" },
+        { "title": "Lamberghini", "artist": "The Doorbeen", "duration": "3:15", "url": "https://youtu.be/56YlYmU_n4o" }
+      ]
+    },
+    "sad": {
+      "description": "Calm and soothing songs",
+      "color": "#4169E1",
+      "songs": [
+        { "title": "Pachtaoge", "artist": "Arijit Singh", "duration": "3:46", "url": "https://youtu.be/pvRsN7SByvE" },
+        { "title": "Qismat", "artist": "Ammy Virk", "duration": "3:58", "url": "https://youtu.be/rNOnP8_Z5io" },
+        { "title": "Filhall", "artist": "B Praak", "duration": "4:15", "url": "https://youtu.be/hMy5za-m5Ew" },
+        { "title": "Baarish Ki Jaaye", "artist": "B Praak", "duration": "3:50", "url": "https://youtu.be/N2-0P-Rz6-g" },
+        { "title": "Hath Chumme", "artist": "Ammy Virk", "duration": "4:20", "url": "https://youtu.be/4e0-F9E6-D8" },
+        { "title": "Mann Bharrya", "artist": "B Praak", "duration": "4:32", "url": "https://youtu.be/u88Yv78Z6uE" },
+        { "title": "Soch", "artist": "Hardy Sandhu", "duration": "4:40", "url": "https://youtu.be/y-YvshU015k" },
+        { "title": "Kalla Sohna Nai", "artist": "Akhil", "duration": "3:15", "url": "https://youtu.be/GAsfC86A8a8" },
+        { "title": "Dil Todne Se Pehle", "artist": "Jass Manak", "duration": "3:45", "url": "https://youtu.be/8-m6YmYqM6o" },
+        { "title": "Wajay", "artist": "Kanwar Grewal", "duration": "5:10", "url": "https://youtu.be/XYZ123" }
+      ]
+    },
+    "angry": {
+      "description": "Relaxing and calming songs",
+      "color": "#FF6347",
+      "songs": [
+        { "title": "SYL", "artist": "Sidhu Moose Wala", "duration": "4:00", "url": "https://youtu.be/XYZ1" },
+        { "title": "The Last Ride", "artist": "Sidhu Moose Wala", "duration": "4:20", "url": "https://youtu.be/XYZ2" },
+        { "title": "Warrior", "artist": "Sidhu Moose Wala", "duration": "3:40", "url": "https://youtu.be/XYZ3" },
+        { "title": "Badfella", "artist": "Sidhu Moose Wala", "duration": "3:30", "url": "https://youtu.be/XYZ4" },
+        { "title": "Same Beef", "artist": "Bohemia & Sidhu Moose Wala", "duration": "4:10", "url": "https://youtu.be/XYZ5" },
+        { "title": "Goat", "artist": "Sidhu Moose Wala", "duration": "3:20", "url": "https://youtu.be/XYZ6" },
+        { "title": "Signed To God", "artist": "Sidhu Moose Wala", "duration": "3:15", "url": "https://youtu.be/XYZ7" },
+        { "title": "Levels", "artist": "Sidhu Moose Wala", "duration": "3:50", "url": "https://youtu.be/XYZ8" },
+        { "title": "Never Fold", "artist": "Sidhu Moose Wala", "duration": "3:45", "url": "https://youtu.be/XYZ9" },
+        { "title": "Celebrity Killer", "artist": "Sidhu Moose Wala", "duration": "3:10", "url": "https://youtu.be/XYZ0" }
+      ]
+    },
+    "neutral": {
+      "description": "Balanced and normal tempo songs",
+      "color": "#808080",
+      "songs": [
+        { "title": "G.O.A.T.", "artist": "Diljit Dosanjh", "duration": "3:20", "url": "https://youtu.be/cl0a3i2wDzQ" },
+        { "title": "Born to Shine", "artist": "Diljit Dosanjh", "duration": "3:15", "url": "https://youtu.be/O6P8O8i3_20" },
+        { "title": "Lover", "artist": "Diljit Dosanjh", "duration": "3:10", "url": "https://youtu.be/mH09F9W8_9E" },
+        { "title": "Insane", "artist": "AP Dhillon", "duration": "3:25", "url": "https://youtu.be/cl0a3i2wDzQ" },
+        { "title": "Summer High", "artist": "AP Dhillon", "duration": "2:57", "url": "https://youtu.be/vX2cDW8LUWk" },
+        { "title": "Majhail", "artist": "AP Dhillon", "duration": "3:12", "url": "https://youtu.be/VNs_jkTDjtU" },
+        { "title": "Moon Child", "artist": "Diljit Dosanjh", "duration": "3:40", "url": "https://youtu.be/XYZ777" },
+        { "title": "Black & White", "artist": "Diljit Dosanjh", "duration": "3:05", "url": "https://youtu.be/XYZ888" },
+        { "title": "Vibe", "artist": "Diljit Dosanjh", "duration": "2:50", "url": "https://youtu.be/XYZ999" },
+        { "title": "Lemonade", "artist": "Diljit Dosanjh", "duration": "3:00", "url": "https://youtu.be/XYZ000" }
+      ]
+    },
+    "surprise": {
+      "description": "Uplifting and exciting songs",
+      "color": "#FF1493",
+      "songs": [
+        { "title": "Proper Patola", "artist": "Diljit Dosanjh", "duration": "3:10", "url": "https://youtu.be/XYZ11" },
+        { "title": "Mundian To Bach Ke", "artist": "Panjabi MC", "duration": "3:30", "url": "https://youtu.be/XYZ22" },
+        { "title": "Sauda Khara Khara", "artist": "Diljit Dosanjh", "duration": "3:45", "url": "https://youtu.be/XYZ33" },
+        { "title": "Patiala Peg", "artist": "Diljit Dosanjh", "duration": "3:15", "url": "https://youtu.be/XYZ44" },
+        { "title": "Morni Banke", "artist": "Guru Randhawa", "duration": "3:20", "url": "https://youtu.be/XYZ55" },
+        { "title": "Illegal Weapon", "artist": "Jasmine Sandlas", "duration": "3:10", "url": "https://youtu.be/XYZ66" },
+        { "title": "Coka", "artist": "Sukh-E Muzical Doctorz", "duration": "3:05", "url": "https://youtu.be/XYZ77" },
+        { "title": "Expert Jatt", "artist": "Nawab", "duration": "3:25", "url": "https://youtu.be/XYZ88" },
+        { "title": "Billionaire", "artist": "Yo Yo Honey Singh", "duration": "3:35", "url": "https://youtu.be/XYZ99" },
+        { "title": "Daru Badnaam", "artist": "Kamal Kahlon", "duration": "3:10", "url": "https://youtu.be/XYZ00" }
+      ]
+    }
   },
-  "sad": {
-    "description": "Calm and soothing songs",
-    "color": "#4169E1",
-    "songs": [
-      {
-        "title": "Someone Like You",
-        "artist": "Adele",
-        "duration": "4:45",
-        "url": "https://www.youtube.com/watch?v=hHUbLv4ThOo"
-      },
-      {
-        "title": "The Night We Met",
-        "artist": "Lord Huron",
-        "duration": "3:55",
-        "url": "https://www.youtube.com/watch?v=KrC1zZ6Twc0"
-      },
-      {
-        "title": "Skinny Love",
-        "artist": "Bon Iver",
-        "duration": "3:59",
-        "url": "https://www.youtube.com/watch?v=ssdgFoHLwnk"
-      }
-    ]
-  },
-  "angry": {
-    "description": "Relaxing and calming songs",
-    "color": "#FF6347",
-    "songs": [
-      {
-        "title": "Weightless",
-        "artist": "Marconi Union",
-        "duration": "8:00",
-        "url": "https://www.youtube.com/watch?v=jG1FaH7jJM8"
-      },
-      {
-        "title": "Clair de Lune",
-        "artist": "Claude Debussy",
-        "duration": "4:41",
-        "url": "https://www.youtube.com/watch?v=Js_p8HOAQ4Q"
-      },
-      {
-        "title": "Meditation",
-        "artist": "Zen Meditation",
-        "duration": "10:00",
-        "url": "https://www.youtube.com/watch?v=aA3Hc4S3VfE"
-      }
-    ]
-  },
-  "neutral": {
-    "description": "Balanced and normal tempo songs",
-    "color": "#808080",
-    "songs": [
-      {
-        "title": "Levitating",
-        "artist": "Dua Lipa",
-        "duration": "3:23",
-        "url": "https://www.youtube.com/watch?v=TUVcZfQe-Kw"
-      },
-      {
-        "title": "As It Was",
-        "artist": "Harry Styles",
-        "duration": "2:46",
-        "url": "https://www.youtube.com/watch?v=H5v3kKSFVzE"
-      },
-      {
-        "title": "Anti-Hero",
-        "artist": "Taylor Swift",
-        "duration": "3:21",
-        "url": "https://www.youtube.com/watch?v=r5quen1dFXo"
-      }
-    ]
-  },
-  "surprise": {
-    "description": "Uplifting and exciting songs",
-    "color": "#FF1493",
-    "songs": [
-      {
-        "title": "Can't Hold Us",
-        "artist": "Macklemore & Ryan Lewis",
-        "duration": "4:07",
-        "url": "https://www.youtube.com/watch?v=e-IWRmpefzE"
-      },
-      {
-        "title": "Uptown Funk",
-        "artist": "Mark Ronson ft. Bruno Mars",
-        "duration": "4:30",
-        "url": "https://www.youtube.com/watch?v=OPf0YbXqDm0"
-      },
-      {
-        "title": "Take On Me",
-        "artist": "a-ha",
-        "duration": "3:33",
-        "url": "https://www.youtube.com/watch?v=djV11Xbc914"
-      }
-    ]
+  "hindi": {
+    "happy": {
+      "description": "Energetic and uplifting songs",
+      "color": "#FFD700",
+      "songs": [
+        { "title": "Dil Chahta Hai", "artist": "Shankar Mahadevan", "duration": "5:11", "url": "https://youtu.be/XYZ" },
+        { "title": "Zinda", "artist": "Siddharth Mahadevan", "duration": "3:31", "url": "https://youtu.be/XYZ" },
+        { "title": "Kar Gayi Chull", "artist": "Badshah", "duration": "3:07", "url": "https://youtu.be/XYZ" },
+        { "title": "Subha Subha", "artist": "Arijit Singh", "duration": "4:38", "url": "https://youtu.be/XYZ" },
+        { "title": "Matargashti", "artist": "Mohit Chauhan", "duration": "5:28", "url": "https://youtu.be/XYZ" },
+        { "title": "Iktara", "artist": "Kavita Seth", "duration": "4:13", "url": "https://youtu.be/XYZ" },
+        { "title": "Uff Teri Ada", "artist": "Shankar Mahadevan", "duration": "5:06", "url": "https://youtu.be/XYZ" },
+        { "title": "Ilahi", "artist": "Arijit Singh", "duration": "3:48", "url": "https://youtu.be/XYZ" },
+        { "title": "Sham", "artist": "Amit Trivedi", "duration": "4:42", "url": "https://youtu.be/XYZ" },
+        { "title": "Khaabon Ke Parindey", "artist": "Mohit Chauhan", "duration": "4:13", "url": "https://youtu.be/XYZ" }
+      ]
+    },
+    "sad": {
+      "description": "Calm and soothing songs",
+      "color": "#4169E1",
+      "songs": [
+        { "title": "Tum Hi Ho", "artist": "Arijit Singh", "duration": "4:22", "url": "https://youtu.be/XYZ" },
+        { "title": "Agar Tum Saath Ho", "artist": "Alka Yagnik & Arijit Singh", "duration": "5:41", "url": "https://youtu.be/XYZ" },
+        { "title": "Channa Mereya", "artist": "Arijit Singh", "duration": "4:49", "url": "https://youtu.be/XYZ" },
+        { "title": "Kabira", "artist": "Tochi Raina", "duration": "3:43", "url": "https://youtu.be/XYZ" },
+        { "title": "Duaa", "artist": "Arijit Singh", "duration": "4:20", "url": "https://youtu.be/XYZ" },
+        { "title": "Main Jahaan Rahoon", "artist": "Rahat Fateh Ali Khan", "duration": "5:12", "url": "https://youtu.be/XYZ" },
+        { "title": "Phir Le Aya Dil", "artist": "Rekha Bhardwaj", "duration": "5:05", "url": "https://youtu.be/XYZ" },
+        { "title": "Tujhe Kitna Chahne Lage", "artist": "Arijit Singh", "duration": "4:44", "url": "https://youtu.be/XYZ" },
+        { "title": "Bulleya", "artist": "Papon", "duration": "5:57", "url": "https://youtu.be/XYZ" },
+        { "title": "Ae Dil Hai Mushkil", "artist": "Arijit Singh", "duration": "4:29", "url": "https://youtu.be/XYZ" }
+      ]
+    },
+    "angry": {
+      "description": "Relaxing and calming songs",
+      "color": "#FF6347",
+      "songs": [
+        { "title": "Zinda", "artist": "Siddharth Mahadevan", "duration": "3:30", "url": "https://youtu.be/XYZ" },
+        { "title": "Aarambh Hai Prachand", "artist": "Piyush Mishra", "duration": "5:10", "url": "https://youtu.be/XYZ" },
+        { "title": "Sadda Haq", "artist": "Mohit Chauhan", "duration": "6:05", "url": "https://youtu.be/XYZ" },
+        { "title": "Bhag D K Bose", "artist": "Ram Sampath", "duration": "3:58", "url": "https://youtu.be/XYZ" },
+        { "title": "Bezubaan", "artist": "Mohit Suri", "duration": "4:40", "url": "https://youtu.be/XYZ" },
+        { "title": "Sultan Title Track", "artist": "Sukhwinder Singh", "duration": "4:40", "url": "https://youtu.be/XYZ" },
+        { "title": "Lakshya Title Track", "artist": "Shankar Mahadevan", "duration": "6:14", "url": "https://youtu.be/XYZ" },
+        { "title": "Brothers Anthem", "artist": "Vishal Dadlani", "duration": "5:53", "url": "https://youtu.be/XYZ" },
+        { "title": "Kar Har Maidaan Fateh", "artist": "Sukhwinder Singh", "duration": "5:11", "url": "https://youtu.be/XYZ" },
+        { "title": "Dangal Title Track", "artist": "Daler Mehndi", "duration": "4:59", "url": "https://youtu.be/XYZ" }
+      ]
+    },
+    "neutral": {
+      "description": "Balanced and normal tempo songs",
+      "color": "#808080",
+      "songs": [
+        { "title": "Kesariya", "artist": "Arijit Singh", "duration": "4:28", "url": "https://youtu.be/XYZ" },
+        { "title": "Raataan Lambiyan", "artist": "Jubin Nautiyal", "duration": "3:50", "url": "https://youtu.be/XYZ" },
+        { "title": "Tera Ban Jaunga", "artist": "Akhil Sachdeva", "duration": "3:56", "url": "https://youtu.be/XYZ" },
+        { "title": "Makhna", "artist": "Tanishk Bagchi", "duration": "3:03", "url": "https://youtu.be/XYZ" },
+        { "title": "Ghungroo", "artist": "Arijit Singh", "duration": "5:02", "url": "https://youtu.be/XYZ" },
+        { "title": "Nashe Si Chadh Gayi", "artist": "Arijit Singh", "duration": "3:57", "url": "https://youtu.be/XYZ" },
+        { "title": "Zaalima", "artist": "Arijit Singh", "duration": "4:59", "url": "https://youtu.be/XYZ" },
+        { "title": "Dil Diyan Gallan", "artist": "Atif Aslam", "duration": "4:20", "url": "https://youtu.be/XYZ" },
+        { "title": "Mast Magan", "artist": "Arijit Singh", "duration": "4:40", "url": "https://youtu.be/XYZ" },
+        { "title": "Tera Yaar Hoon Main", "artist": "Arijit Singh", "duration": "4:24", "url": "https://youtu.be/XYZ" }
+      ]
+    },
+    "surprise": {
+      "description": "Uplifting and exciting songs",
+      "color": "#FF1493",
+      "songs": [
+        { "title": "Jai Ho", "artist": "A.R. Rahman", "duration": "5:19", "url": "https://youtu.be/XYZ" },
+        { "title": "Gallan Goodiyaan", "artist": "Farhan Akhtar", "duration": "4:56", "url": "https://youtu.be/XYZ" },
+        { "title": "Aankh Marey", "artist": "Neha Kakkar", "duration": "3:32", "url": "https://youtu.be/XYZ" },
+        { "title": "First Class", "artist": "Arijit Singh", "duration": "4:36", "url": "https://youtu.be/XYZ" },
+        { "title": "Ainvayi Ainvayi", "artist": "Sunidhi Chauhan", "duration": "4:25", "url": "https://youtu.be/XYZ" },
+        { "title": "Badtameez Dil", "artist": "Benny Dayal", "duration": "4:12", "url": "https://youtu.be/XYZ" },
+        { "title": "Malhari", "artist": "Vishal Dadlani", "duration": "4:05", "url": "https://youtu.be/XYZ" },
+        { "title": "Kala Chashma", "artist": "Badshah", "duration": "3:07", "url": "https://youtu.be/XYZ" },
+        { "title": "Galla Goodiyan", "artist": "Shankar Mahadevan", "duration": "4:50", "url": "https://youtu.be/XYZ" },
+        { "title": "Bom Diggy Diggy", "artist": "Zack Knight", "duration": "3:58", "url": "https://youtu.be/XYZ" }
+      ]
+    }
   }
 }
