@@ -50,11 +50,15 @@
 
   <section class="camera-section">
     <label>
-      <input type="checkbox" id="cameraToggle"> Auto Detect Mood
+      <input type="checkbox" id="cameraToggle" checked> Auto Detect Mood
     </label>
 
     <div id="cameraBox" class="camera-box hidden">
       <video id="video" autoplay></video>
+
+      <!-- 🔥 FACE OVERLAY CANVAS -->
+      <canvas id="faceCanvas"></canvas>
+
       <div class="overlay">Detecting...</div>
     </div>
   </section>
