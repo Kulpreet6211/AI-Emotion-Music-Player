@@ -92,7 +92,31 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (changes.spotifyPlaybackState) {
     const state = changes.spotifyPlaybackState.newValue;
     if (state && state.song) {
-      const songIndex = playlist.findIndex(s => s.spotify_uri === state.song.spotify_uri);
+      const songIndex = playlist.findIndex(s => 
+        (s.spotify_uri && s.spotify_uri === state.song.spotify_uri) ||
+        (s.title.toLowerCase() === state.song.title.toLowerCase() && s.artist.toLowerCase() === state.song.artist.toLowerCase())
+      );
+      if (songIndex !== -1) {
+        currentIndex = songIndex;
+        if (!playlist[currentIndex].spotify_uri) {
+          playlist[currentIndex].spotify_uri = state.song.spotify_uri;
+        }
+      }
+      document.getElementById("songTitle").innerText = state.song.title;
+      document.getElementById("songArtist").innerText = state.song.artist;
+      highlightActive();
+
+      updatePlayBtnIcon(state.isPlaying);
+    }
+  }
+
+  if (changes.localPlaybackState) {
+    const state = changes.localPlaybackState.newValue;
+    if (state && state.song) {
+      const songIndex = playlist.findIndex(s => 
+        (s.url && s.url === state.song.url) ||
+        (s.title.toLowerCase() === state.song.title.toLowerCase() && s.artist.toLowerCase() === state.song.artist.toLowerCase())
+      );
       if (songIndex !== -1) {
         currentIndex = songIndex;
       }
@@ -102,6 +126,10 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
       updatePlayBtnIcon(state.isPlaying);
     }
+  }
+
+  if (changes.enablePlaylistAutoRefresh || changes.playlistRefreshInterval) {
+    setupPlaylistRefresh();
   }
 });
 
@@ -322,10 +350,12 @@ function formatTime(time) {
 // ===============================
 // LOAD PLAYLIST
 // ===============================
-async function loadPlaylist(mood, lang = null) {
+async function loadPlaylist(mood, lang = null, isAutoRefresh = false) {
   if (!mood) return;
   const container = document.getElementById("playlistContainer");
-  container.innerHTML = "Loading...";
+  if (!isAutoRefresh && container) {
+    container.innerHTML = "Loading...";
+  }
 
   let songs = [];
 
@@ -353,68 +383,121 @@ async function loadPlaylist(mood, lang = null) {
     }
   } catch (err) {
     console.error("Error in loadPlaylist:", err.message || err);
-    container.innerHTML = '<p style="opacity:0.5; font-size:11px; padding: 6px 0; color:#ef4444;">Error loading playlist. Is backend running?</p>';
+    if (container) {
+      container.innerHTML = '<p style="opacity:0.5; font-size:11px; padding: 6px 0; color:#ef4444;">Error loading playlist. Is backend running?</p>';
+    }
     return;
   }
 
-  playlist = songs;
-  container.innerHTML = "";
-
-  if (playlist.length === 0) {
-    container.innerHTML = `<p style="opacity:0.5; font-size:11px; padding: 6px 0;">No songs found. Try changing language or mood.</p>`;
-    return;
-  }
-
-  playlist.forEach((song, i) => {
-    const div = document.createElement("div");
-    div.className = "song-item";
-    div.innerHTML = `
-      <strong>${song.title}</strong> - <span>${song.artist}</span>
-      <span style="float:right; font-size:10px; opacity:0.6;">${song.duration || ''}</span>
-    `;
-
-    div.onclick = () => {
-      currentIndex = i;
-      updateNowPlaying();
-      highlightActive();
-
-      chrome.storage.local.get(['spotifyConnected'], async (res) => {
-        if (res.spotifyConnected) {
-          const token = await getSpotifyAccessToken();
-          if (token) {
-            const success = await playSongSpotify(song);
-            if (success) {
-              updatePlayBtnIcon(true);
-              setSpotifyPlaybackState(true, song, 0);
-              ensureDashboardOpen();
-            }
-          }
+  if (isAutoRefresh) {
+    if (songs && songs.length > 0) {
+      const currentSong = playlist[currentIndex];
+      playlist = songs;
+      if (currentSong) {
+        const newIdx = playlist.findIndex(s => 
+          (s.spotify_uri && s.spotify_uri === currentSong.spotify_uri) ||
+          (s.url && s.url === currentSong.url) ||
+          (s.title === currentSong.title && s.artist === currentSong.artist)
+        );
+        if (newIdx !== -1) {
+          currentIndex = newIdx;
         } else {
-          if (song.url && (song.url.startsWith("http") || song.url.startsWith("www") || song.url.includes("youtu"))) {
-            chrome.tabs.create({ url: song.url });
-          }
+          playlist.unshift(currentSong);
+          currentIndex = 0;
         }
-      });
-    };
-
-    container.appendChild(div);
-  });
-
-  chrome.storage.local.get(['spotifyPlaybackState'], (resState) => {
-    const state = resState.spotifyPlaybackState;
-    if (state && state.song) {
-      const idx = playlist.findIndex(s => s.spotify_uri === state.song.spotify_uri);
-      if (idx !== -1) {
-        currentIndex = idx;
       } else {
         currentIndex = 0;
       }
-    } else {
-      currentIndex = 0;
     }
-    updateNowPlaying();
-    highlightActive();
-  });
+  } else {
+    playlist = songs;
+  }
+
+  if (container) {
+    container.innerHTML = "";
+
+    if (playlist.length === 0) {
+      container.innerHTML = `<p style="opacity:0.5; font-size:11px; padding: 6px 0;">No songs found. Try changing language or mood.</p>`;
+      return;
+    }
+
+    playlist.forEach((song, i) => {
+      const div = document.createElement("div");
+      div.className = "song-item";
+      div.innerHTML = `
+        <strong>${song.title}</strong> - <span>${song.artist}</span>
+        <span style="float:right; font-size:10px; opacity:0.6;">${song.duration || ''}</span>
+      `;
+
+      div.onclick = () => {
+        currentIndex = i;
+        updateNowPlaying();
+        highlightActive();
+
+        chrome.storage.local.get(['spotifyConnected'], async (res) => {
+          if (res.spotifyConnected) {
+            const token = await getSpotifyAccessToken();
+            if (token) {
+              const success = await playSongSpotify(song);
+              if (success) {
+                updatePlayBtnIcon(true);
+                setSpotifyPlaybackState(true, song, 0);
+                ensureDashboardOpen();
+              }
+            }
+          } else {
+            if (song.url && (song.url.startsWith("http") || song.url.startsWith("www") || song.url.includes("youtu"))) {
+              setLocalPlaybackState(true, song, 0);
+              ensureDashboardOpen();
+            }
+          }
+        });
+      };
+
+      container.appendChild(div);
+    });
+
+    if (isAutoRefresh) {
+      highlightActive();
+      return;
+    }
+
+    chrome.storage.local.get(['spotifyPlaybackState', 'localPlaybackState', 'spotifyConnected'], (resState) => {
+      if (resState.spotifyConnected) {
+        const state = resState.spotifyPlaybackState;
+        if (state && state.song) {
+          const idx = playlist.findIndex(s => 
+            (s.spotify_uri && s.spotify_uri === state.song.spotify_uri) ||
+            (s.title.toLowerCase() === state.song.title.toLowerCase() && s.artist.toLowerCase() === state.song.artist.toLowerCase())
+          );
+          if (idx !== -1) {
+            currentIndex = idx;
+          } else {
+            currentIndex = 0;
+          }
+        } else {
+          currentIndex = 0;
+        }
+      } else {
+        const state = resState.localPlaybackState;
+        if (state && state.song) {
+          const idx = playlist.findIndex(s => 
+            (s.url && s.url === state.song.url) ||
+            (s.title.toLowerCase() === state.song.title.toLowerCase() && s.artist.toLowerCase() === state.song.artist.toLowerCase())
+          );
+          if (idx !== -1) {
+            currentIndex = idx;
+          } else {
+            currentIndex = 0;
+          }
+        } else {
+          currentIndex = 0;
+        }
+      }
+      updateNowPlaying();
+      highlightActive();
+    });
+  }
 }
 
 
@@ -477,6 +560,20 @@ function setSpotifyPlaybackState(isPlaying, song, progressMs = 0) {
     }
   }, () => {
     console.log("Updated spotifyPlaybackState in storage:", isPlaying, song?.title);
+  });
+}
+
+function setLocalPlaybackState(isPlaying, song, progressMs = 0) {
+  chrome.storage.local.set({
+    localPlaybackState: {
+      isPlaying: isPlaying,
+      song: song,
+      startTime: Date.now(),
+      progressMs: progressMs,
+      lastUpdated: Date.now()
+    }
+  }, () => {
+    console.log("Popup updated localPlaybackState in storage:", isPlaying, song?.title);
   });
 }
 
@@ -627,9 +724,14 @@ document.getElementById("playBtn").onclick = () => {
       }
     }
 
-    chrome.tabs.create({
-      url: song.url
-    });
+    if (!res.spotifyConnected) {
+      chrome.storage.local.get(['localPlaybackState'], (localRes) => {
+        const state = localRes.localPlaybackState || {};
+        const wasPlaying = state.isPlaying ?? false;
+        setLocalPlaybackState(!wasPlaying, song, wasPlaying ? (Date.now() - state.startTime) : 0);
+        ensureDashboardOpen();
+      });
+    }
   });
 };
 
@@ -658,9 +760,40 @@ document.getElementById("nextBtn").onclick = () => {
           ensureDashboardOpen();
         }
       }
+    } else {
+      setLocalPlaybackState(true, song, 0);
+      ensureDashboardOpen();
     }
   });
 };
+
+
+// ===============================
+// PLAYLIST AUTO-REFRESH TIMER
+// ===============================
+let playlistRefreshTimer = null;
+
+function setupPlaylistRefresh() {
+  if (playlistRefreshTimer) {
+    clearInterval(playlistRefreshTimer);
+    playlistRefreshTimer = null;
+  }
+
+  chrome.storage.local.get(["enablePlaylistAutoRefresh", "playlistRefreshInterval"], (res) => {
+    const enabled = res.enablePlaylistAutoRefresh ?? false;
+    const intervalMins = res.playlistRefreshInterval || 10;
+    
+    if (enabled && intervalMins > 0) {
+      console.log(`Setting up popup playlist auto-refresh every ${intervalMins} minutes.`);
+      playlistRefreshTimer = setInterval(() => {
+        console.log("Popup auto-refreshing playlist...");
+        chrome.storage.local.get(["currentMood", "language"], (r) => {
+          loadPlaylist(r.currentMood || "happy", r.language || "punjabi", true);
+        });
+      }, intervalMins * 60 * 1000);
+    }
+  });
+}
 
 
 // ===============================
@@ -669,6 +802,7 @@ document.getElementById("nextBtn").onclick = () => {
 chrome.storage.local.get(["currentMood"], (result) => {
   const mood = result.currentMood || "happy";
   selectMood(mood);
+  setupPlaylistRefresh();
 });
 
 

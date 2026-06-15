@@ -29,6 +29,17 @@ const progressContainer = document.querySelector(".progress-container");
 const currentTimeEl = document.getElementById("currentTime");
 const durationEl = document.getElementById("duration");
 
+// Settings elements
+const notifToggle = document.getElementById("enableNotif");
+const notifTimerContainer = document.getElementById("notificationTimerContainer");
+const rescanSlider = document.getElementById("timeSlider");
+const rescanTimeText = document.getElementById("timeValue");
+
+const autoRefreshToggle = document.getElementById("enableAutoRefresh");
+const autoRefreshContainer = document.getElementById("autoRefreshIntervalContainer");
+const autoRefreshSlider = document.getElementById("refreshIntervalSlider");
+const autoRefreshValueText = document.getElementById("refreshIntervalValue");
+
 
 // ===============================
 // GLOBAL STATE
@@ -45,6 +56,13 @@ let spotifyTimer = null;
 let spotifyCurrentTime = 0;
 let spotifyDuration = 180;
 let lastPlaybackStateTimestamp = 0;
+
+// YouTube / Local State
+let lastLocalPlaybackStateTimestamp = 0;
+let youtubeTabId = null;
+let youtubeTimer = null;
+let youtubeCurrentTime = 0;
+let youtubeDuration = 180;
 
 // ===============================
 // SPOTIFY HELPERS
@@ -209,11 +227,19 @@ function syncSpotifyPlaybackState(state) {
     console.log("Dashboard syncing playback state from storage:", state.song.title, "isPlaying:", state.isPlaying);
 
     const song = state.song;
+    updateMediaSession(song, state.isPlaying);
     
-    // Find song in currentPlaylist
-    const songIndex = currentPlaylist.findIndex(s => s.spotify_uri === song.spotify_uri);
+    // Find song in currentPlaylist (with title & artist match fallback)
+    const songIndex = currentPlaylist.findIndex(s => 
+        (s.spotify_uri && s.spotify_uri === song.spotify_uri) || 
+        (s.title.toLowerCase() === song.title.toLowerCase() && s.artist.toLowerCase() === song.artist.toLowerCase())
+    );
     if (songIndex !== -1) {
         currentIndex = songIndex;
+        // Cache the spotify_uri if not already set
+        if (!currentPlaylist[currentIndex].spotify_uri) {
+            currentPlaylist[currentIndex].spotify_uri = song.spotify_uri;
+        }
     } else {
         currentPlaylist = [song];
         currentIndex = 0;
@@ -281,6 +307,247 @@ function startSpotifyProgressTimerFromOffset(durationStr, elapsedSec) {
             progressBar.style.width = (spotifyCurrentTime / spotifyDuration * 100) + "%";
         }
     }, 1000);
+}
+
+// YouTube / Local Player Helpers
+function playYouTubeSong(url) {
+    if (youtubeTabId !== null) {
+        chrome.tabs.get(youtubeTabId, (tab) => {
+            if (chrome.runtime.lastError || !tab) {
+                // Tab was closed, create a new one
+                chrome.tabs.create({ url: url, active: true }, (newTab) => {
+                    youtubeTabId = newTab.id;
+                });
+            } else {
+                // Tab is still open, update its URL
+                chrome.tabs.update(youtubeTabId, { url: url, active: true });
+            }
+        });
+    } else {
+        chrome.tabs.create({ url: url, active: true }, (newTab) => {
+            youtubeTabId = newTab.id;
+        });
+    }
+}
+
+function startYouTubeProgressTimer(durationStr) {
+    clearInterval(youtubeTimer);
+    
+    let parts = durationStr.split(':');
+    if (parts.length === 2) {
+        youtubeDuration = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    } else {
+        youtubeDuration = 180;
+    }
+    
+    youtubeCurrentTime = 0;
+    if (durationEl) durationEl.innerText = durationStr;
+    if (currentTimeEl) currentTimeEl.innerText = "0:00";
+    if (progressBar) progressBar.style.width = "0%";
+    
+    isPlaying = true;
+    if (playBtn) playBtn.innerText = "⏸";
+
+    youtubeTimer = setInterval(() => {
+        if (!isPlaying) return;
+        youtubeCurrentTime++;
+        if (youtubeCurrentTime >= youtubeDuration) {
+            clearInterval(youtubeTimer);
+            handleTrackEnded();
+            return;
+        }
+        if (currentTimeEl) currentTimeEl.innerText = formatTime(youtubeCurrentTime);
+        if (progressBar && youtubeDuration > 0) {
+            progressBar.style.width = (youtubeCurrentTime / youtubeDuration * 100) + "%";
+        }
+    }, 1000);
+}
+
+function startYouTubeProgressTimerFromOffset(durationStr, elapsedSec) {
+    clearInterval(youtubeTimer);
+    
+    let parts = durationStr.split(':');
+    if (parts.length === 2) {
+        youtubeDuration = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    } else {
+        youtubeDuration = 180;
+    }
+    
+    youtubeCurrentTime = elapsedSec;
+    if (durationEl) durationEl.innerText = durationStr;
+    if (currentTimeEl) currentTimeEl.innerText = formatTime(youtubeCurrentTime);
+    if (progressBar && youtubeDuration > 0) {
+        progressBar.style.width = (youtubeCurrentTime / youtubeDuration * 100) + "%";
+    }
+    
+    isPlaying = true;
+    if (playBtn) playBtn.innerText = "⏸";
+
+    youtubeTimer = setInterval(() => {
+        if (!isPlaying) return;
+        youtubeCurrentTime++;
+        if (youtubeCurrentTime >= youtubeDuration) {
+            clearInterval(youtubeTimer);
+            handleTrackEnded();
+            return;
+        }
+        if (currentTimeEl) currentTimeEl.innerText = formatTime(youtubeCurrentTime);
+        if (progressBar && youtubeDuration > 0) {
+            progressBar.style.width = (youtubeCurrentTime / youtubeDuration * 100) + "%";
+        }
+    }, 1000);
+}
+
+function stopYouTubeProgressTimer() {
+    clearInterval(youtubeTimer);
+}
+
+function setLocalPlaybackState(isPlaying, song, progressMs = 0) {
+    lastLocalPlaybackStateTimestamp = Date.now();
+    chrome.storage.local.set({
+        localPlaybackState: {
+            isPlaying: isPlaying,
+            song: song,
+            startTime: Date.now(),
+            progressMs: progressMs,
+            lastUpdated: Date.now()
+        }
+    });
+}
+
+// ===============================
+// MEDIA SESSION API (SYSTEM NOTIFICATION PLAYER)
+// ===============================
+let silentAudio = null;
+function initSilentAudio() {
+    if (!silentAudio) {
+        silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAAA");
+        silentAudio.loop = true;
+    }
+}
+
+function updateMediaSession(song, isPlaying) {
+    if (!('mediaSession' in navigator)) return;
+
+    try {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.title || 'Unknown Track',
+            artist: song.artist || 'Unknown Artist',
+            album: 'FeelFlow Playlist',
+            artwork: [
+                { src: 'icons/headphones.png', sizes: '128x128', type: 'image/png' },
+                { src: 'icons/headphones.png', sizes: '512x512', type: 'image/png' }
+            ]
+        });
+
+        navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+
+        // Set action handlers
+        navigator.mediaSession.setActionHandler('play', () => {
+            const btn = document.getElementById("playBtn");
+            if (btn) btn.click();
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            const btn = document.getElementById("playBtn");
+            if (btn) btn.click();
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            const btn = document.getElementById("prevBtn");
+            if (btn) btn.click();
+        });
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            const btn = document.getElementById("nextBtn");
+            if (btn) btn.click();
+        });
+
+        // Silent audio fallback to keep media session active for Spotify / YouTube
+        initSilentAudio();
+        chrome.storage.local.get(['spotifyConnected'], (res) => {
+            const isSpotify = res.spotifyConnected ?? false;
+            const isYouTube = song.url && (song.url.includes("youtube.com") || song.url.includes("youtu.be"));
+            
+            if (isPlaying) {
+                if (isSpotify || isYouTube) {
+                    silentAudio.play().catch(e => console.log("Silent audio autoplay blocked:", e));
+                } else {
+                    silentAudio.pause();
+                }
+            } else {
+                silentAudio.pause();
+            }
+        });
+
+    } catch (e) {
+        console.warn("Failed to update Media Session API:", e);
+    }
+}
+
+function syncLocalPlaybackState(state) {
+    if (!state || !state.song) return;
+
+    console.log("Dashboard syncing local playback state from storage:", state.song.title, "isPlaying:", state.isPlaying);
+
+    const song = state.song;
+    updateMediaSession(song, state.isPlaying);
+    
+    // Find song in currentPlaylist
+    const songIndex = currentPlaylist.findIndex(s => 
+        (s.url && s.url === song.url) || 
+        (s.title.toLowerCase() === song.title.toLowerCase() && s.artist.toLowerCase() === song.artist.toLowerCase())
+    );
+    if (songIndex !== -1) {
+        currentIndex = songIndex;
+    } else {
+        currentPlaylist = [song];
+        currentIndex = 0;
+    }
+
+    // Update UI Now Playing card
+    document.getElementById("songTitle").innerText = song.title;
+    document.getElementById("songArtist").innerText = song.artist;
+    renderPlaylist(currentPlaylist);
+
+    if (state.isPlaying) {
+        isPlaying = true;
+        if (playBtn) playBtn.innerText = "⏸";
+        
+        // Play song
+        if (song.url && (song.url.includes("youtube.com") || song.url.includes("youtu.be"))) {
+            playYouTubeSong(song.url);
+            
+            // Calculate elapsed offset
+            const elapsedMs = Date.now() - state.startTime + (state.progressMs || 0);
+            const elapsedSec = Math.max(0, Math.floor(elapsedMs / 1000));
+            startYouTubeProgressTimerFromOffset(song.duration, elapsedSec);
+        } else {
+            // Direct audio
+            if (audio) {
+                audio.src = song.url;
+                playSong();
+            }
+        }
+    } else {
+        isPlaying = false;
+        if (playBtn) playBtn.innerText = "▶";
+        
+        if (song.url && (song.url.includes("youtube.com") || song.url.includes("youtu.be"))) {
+            stopYouTubeProgressTimer();
+            
+            let parts = song.duration.split(':');
+            let durationSec = 180;
+            if (parts.length === 2) {
+                durationSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+            }
+            const progressSec = Math.max(0, Math.floor((state.progressMs || 0) / 1000));
+            if (durationEl) durationEl.innerText = song.duration;
+            if (currentTimeEl) currentTimeEl.innerText = formatTime(progressSec);
+            if (progressBar && durationSec > 0) {
+                progressBar.style.width = (progressSec / durationSec * 100) + "%";
+            }
+        } else {
+            pauseSong();
+        }
+    }
 }
 
 async function playSongSpotify(song) {
@@ -417,7 +684,7 @@ async function generateSpotifyRecommendations(mood, lang) {
 // ===============================
 // LOAD PLAYLIST
 // ===============================
-async function loadPlaylist(mood = "happy", lang = null) {
+async function loadPlaylist(mood = "happy", lang = null, isAutoRefresh = false, startPlayback = false) {
     // Always use the most up-to-date language
     const activeLang = lang || language;
     currentMood = mood;
@@ -453,21 +720,71 @@ async function loadPlaylist(mood = "happy", lang = null) {
         }
     }
 
+    if (isAutoRefresh) {
+        if (songs && songs.length > 0) {
+            const currentSong = currentPlaylist[currentIndex];
+            currentPlaylist = songs;
+            if (currentSong) {
+                const idx = currentPlaylist.findIndex(s => 
+                    (s.spotify_uri && s.spotify_uri === currentSong.spotify_uri) ||
+                    (s.url && s.url === currentSong.url) ||
+                    (s.title === currentSong.title && s.artist === currentSong.artist)
+                );
+                if (idx !== -1) {
+                    currentIndex = idx;
+                } else {
+                    currentPlaylist.unshift(currentSong);
+                    currentIndex = 0;
+                }
+            } else {
+                currentIndex = 0;
+            }
+            renderPlaylist(currentPlaylist);
+        }
+        return;
+    }
+
     currentPlaylist = songs;
     currentIndex = 0;
     renderPlaylist(currentPlaylist);
     if (currentPlaylist.length > 0) {
-        chrome.storage.local.get(['spotifyPlaybackState'], (resState) => {
-            const state = resState.spotifyPlaybackState;
-            if (state && state.song) {
-                const idx = currentPlaylist.findIndex(s => s.spotify_uri === state.song.spotify_uri);
-                if (idx !== -1) {
-                    currentIndex = idx;
-                    loadSong(currentIndex, false);
-                    if (state.isPlaying) {
-                        syncSpotifyPlaybackState(state);
+        if (startPlayback) {
+            loadSong(0, true);
+            return;
+        }
+
+        chrome.storage.local.get(['spotifyPlaybackState', 'localPlaybackState', 'spotifyConnected'], (resState) => {
+            if (resState.spotifyConnected) {
+                const state = resState.spotifyPlaybackState;
+                if (state && state.song) {
+                    const idx = currentPlaylist.findIndex(s => 
+                        (s.spotify_uri && s.spotify_uri === state.song.spotify_uri) ||
+                        (s.title.toLowerCase() === state.song.title.toLowerCase() && s.artist.toLowerCase() === state.song.artist.toLowerCase())
+                    );
+                    if (idx !== -1) {
+                        currentIndex = idx;
+                        loadSong(currentIndex, false);
+                        if (state.isPlaying) {
+                            syncSpotifyPlaybackState(state);
+                        }
+                        return;
                     }
-                    return;
+                }
+            } else {
+                const state = resState.localPlaybackState;
+                if (state && state.song) {
+                    const idx = currentPlaylist.findIndex(s => 
+                        (s.url && s.url === state.song.url) || 
+                        (s.title.toLowerCase() === state.song.title.toLowerCase() && s.artist.toLowerCase() === state.song.artist.toLowerCase())
+                    );
+                    if (idx !== -1) {
+                        currentIndex = idx;
+                        loadSong(currentIndex, false);
+                        if (state.isPlaying) {
+                            syncLocalPlaybackState(state);
+                        }
+                        return;
+                    }
                 }
             }
             loadSong(currentIndex, false);
@@ -521,17 +838,30 @@ function loadSong(index, startPlayback = false) {
         if (!res.spotifyConnected) {
             if (song.url && (song.url.includes("youtube.com") || song.url.includes("youtu.be"))) {
                 if (startPlayback) {
-                    chrome.tabs.create({ url: song.url, active: true });
+                    playYouTubeSong(song.url);
+                    startYouTubeProgressTimer(song.duration);
+                    setLocalPlaybackState(true, song, 0);
+                } else {
+                    if (durationEl) durationEl.innerText = song.duration;
+                    if (currentTimeEl) currentTimeEl.innerText = "0:00";
+                    if (progressBar) progressBar.style.width = "0%";
+                    stopYouTubeProgressTimer();
+                    isPlaying = false;
+                    if (playBtn) playBtn.innerText = "▶";
+                    setLocalPlaybackState(false, song, 0);
                 }
                 return;
             }
             
+            stopYouTubeProgressTimer();
             if (audio) {
                 audio.src = song.url;
                 if (startPlayback) {
                     playSong();
+                    setLocalPlaybackState(true, song, 0);
                 } else {
                     pauseSong();
+                    setLocalPlaybackState(false, song, 0);
                 }
             }
             return;
@@ -539,24 +869,29 @@ function loadSong(index, startPlayback = false) {
     });
 }
 
-// ===============================
-// PLAY / PAUSE
-// ===============================
 function playSong() {
-    audio.play().then(() => {
-        isPlaying = true;
-        if (playBtn) playBtn.innerText = "⏸";
-    }).catch((err) => {
-        console.warn("Autoplay blocked or local play error:", err);
-        isPlaying = false;
-        if (playBtn) playBtn.innerText = "▶";
-    });
+    isPlaying = true;
+    if (playBtn) playBtn.innerText = "⏸";
+
+    if (audio && audio.src) {
+        audio.play().catch((err) => {
+            console.warn("Autoplay blocked or local play error:", err);
+            isPlaying = false;
+            if (playBtn) playBtn.innerText = "▶";
+        });
+    }
+    if (currentPlaylist && currentPlaylist[currentIndex]) {
+        updateMediaSession(currentPlaylist[currentIndex], true);
+    }
 }
 
 function pauseSong() {
-    if (audio) audio.pause();
     isPlaying = false;
     if (playBtn) playBtn.innerText = "▶";
+    if (audio) audio.pause();
+    if (currentPlaylist && currentPlaylist[currentIndex]) {
+        updateMediaSession(currentPlaylist[currentIndex], false);
+    }
 }
 
 
@@ -695,6 +1030,45 @@ chrome.storage.onChanged.addListener((changes, area) => {
             syncSpotifyPlaybackState(state);
         }
     }
+
+    // Local playback state sync
+    if (changes.localPlaybackState) {
+        const state = changes.localPlaybackState.newValue;
+        if (state && state.lastUpdated > lastLocalPlaybackStateTimestamp) {
+            lastLocalPlaybackStateTimestamp = state.lastUpdated;
+            syncLocalPlaybackState(state);
+        }
+    }
+
+    // Playlist auto-refresh toggle sync
+    if (changes.enablePlaylistAutoRefresh) {
+        const enabled = changes.enablePlaylistAutoRefresh.newValue;
+        if (autoRefreshToggle) autoRefreshToggle.checked = enabled;
+        if (autoRefreshContainer) autoRefreshContainer.style.display = enabled ? "block" : "none";
+        setupPlaylistRefresh();
+    }
+
+    // Playlist auto-refresh interval sync
+    if (changes.playlistRefreshInterval) {
+        const interval = changes.playlistRefreshInterval.newValue;
+        if (autoRefreshSlider) autoRefreshSlider.value = interval;
+        if (autoRefreshValueText) autoRefreshValueText.textContent = interval;
+        setupPlaylistRefresh();
+    }
+
+    // Notifications toggle sync
+    if (changes.enableNotif) {
+        const enabled = changes.enableNotif.newValue;
+        if (notifToggle) notifToggle.checked = enabled;
+        if (notifTimerContainer) notifTimerContainer.style.display = enabled ? "block" : "none";
+    }
+
+    // Rescan time sync
+    if (changes.rescanTime) {
+        const val = changes.rescanTime.newValue;
+        if (rescanSlider) rescanSlider.value = val;
+        if (rescanTimeText) rescanTimeText.textContent = val;
+    }
 });
 
 
@@ -749,10 +1123,39 @@ if (playBtn) {
                 }
             }
             
-            if (isPlaying) {
-                pauseSong();
-            } else {
-                playSong();
+            if (!res.spotifyConnected) {
+                if (isPlaying) {
+                    pauseSong();
+                    const song = currentPlaylist[currentIndex];
+                    if (song.url && (song.url.includes("youtube.com") || song.url.includes("youtu.be"))) {
+                        stopYouTubeProgressTimer();
+                    }
+                    chrome.storage.local.get(['localPlaybackState'], (localRes) => {
+                        const oldState = localRes.localPlaybackState || {};
+                        const elapsedMs = oldState.isPlaying ? (Date.now() - oldState.startTime) : 0;
+                        setLocalPlaybackState(false, song, (oldState.progressMs || 0) + elapsedMs);
+                    });
+                } else {
+                    const song = currentPlaylist[currentIndex];
+                    if (song.url && (song.url.includes("youtube.com") || song.url.includes("youtu.be"))) {
+                        playYouTubeSong(song.url);
+                        
+                        chrome.storage.local.get(['localPlaybackState'], (localRes) => {
+                            const oldState = localRes.localPlaybackState || {};
+                            const isSameSong = oldState.song && oldState.song.url === song.url;
+                            const startOffsetSec = isSameSong ? Math.floor((oldState.progressMs || 0) / 1000) : 0;
+                            
+                            startYouTubeProgressTimerFromOffset(song.duration, startOffsetSec);
+                            setLocalPlaybackState(true, song, isSameSong ? (oldState.progressMs || 0) : 0);
+                        });
+                    } else {
+                        if (audio) {
+                            audio.src = song.url;
+                            playSong();
+                        }
+                        setLocalPlaybackState(true, song, 0);
+                    }
+                }
             }
         });
     };
@@ -832,16 +1235,21 @@ function formatTime(time) {
 // TRACK ENDED HANDLER
 // ===============================
 function handleTrackEnded() {
-    chrome.storage.local.get(["autoPlay", "loop", "shuffle"], (res) => {
+    chrome.storage.local.get(["autoPlay", "loop", "shuffle", "spotifyConnected"], (res) => {
         const autoPlay = res.autoPlay ?? true;
         const loop = res.loop ?? false;
         const shuffle = res.shuffle ?? true;
+        const spotifyConnected = res.spotifyConnected ?? false;
         
         if (!autoPlay) {
             isPlaying = false;
             if (playBtn) playBtn.innerText = "▶";
             if (currentPlaylist.length > 0) {
-                setSpotifyPlaybackState(false, currentPlaylist[currentIndex], 0);
+                if (spotifyConnected) {
+                    setSpotifyPlaybackState(false, currentPlaylist[currentIndex], 0);
+                } else {
+                    setLocalPlaybackState(false, currentPlaylist[currentIndex], 0);
+                }
             }
             return;
         }
@@ -858,17 +1266,7 @@ function handleTrackEnded() {
                 loadSong(currentIndex, true);
             } else {
                 console.log("End of playlist. Auto-fetching a new dynamic playlist for continuous play...");
-                loadPlaylist(currentMood, language).then(() => {
-                    if (currentPlaylist.length > 0) {
-                        loadSong(0, true);
-                    } else {
-                        isPlaying = false;
-                        if (playBtn) playBtn.innerText = "▶";
-                        if (currentPlaylist.length > 0) {
-                            setSpotifyPlaybackState(false, currentPlaylist[currentIndex], 0);
-                        }
-                    }
-                });
+                loadPlaylist(currentMood, language, false, true);
             }
         } else {
             currentIndex++;
@@ -1008,14 +1406,17 @@ if (volumeSlider) {
 }
 
 // NOTIFICATIONS
-const notifToggle = document.getElementById("enableNotif");
-if (notifToggle) {
+if (notifToggle && notifTimerContainer) {
     chrome.storage.local.get(["enableNotif"], (res) => {
-        notifToggle.checked = res.enableNotif ?? true;
+        const enabled = res.enableNotif ?? true;
+        notifToggle.checked = enabled;
+        notifTimerContainer.style.display = enabled ? "block" : "none";
     });
 
     notifToggle.onchange = () => {
-        chrome.storage.local.set({ enableNotif: notifToggle.checked });
+        const enabled = notifToggle.checked;
+        chrome.storage.local.set({ enableNotif: enabled });
+        notifTimerContainer.style.display = enabled ? "block" : "none";
     };
 }
 
@@ -1038,26 +1439,26 @@ chrome.storage.local.get(["currentMood", "language"], (result) => {
     // Update mood UI
     const textEl = document.getElementById("currentMoodText");
     if (textEl) textEl.innerText = mood.charAt(0).toUpperCase() + mood.slice(1);
+
+    // Setup playlist auto-refresh
+    setupPlaylistRefresh();
 });
 
 
 // ===============================
-// TIME SLIDER
+// TIME SLIDER (NOTIFICATIONS)
 // ===============================
-const slider = document.getElementById("timeSlider");
-const timeText = document.getElementById("timeValue");
-
-if (slider && timeText) {
+if (rescanSlider && rescanTimeText) {
     chrome.storage.local.get(["rescanTime"], (result) => {
         const time = result.rescanTime || 5;
-        slider.value = time;
-        timeText.textContent = time;
+        rescanSlider.value = time;
+        rescanTimeText.textContent = time;
     });
 
-    slider.addEventListener("input", () => {
-        const value = Number(slider.value);
+    rescanSlider.addEventListener("input", () => {
+        const value = Number(rescanSlider.value);
 
-        timeText.textContent = value;
+        rescanTimeText.textContent = value;
 
         chrome.storage.local.set({ rescanTime: value });
 
@@ -1066,6 +1467,58 @@ if (slider && timeText) {
             time: value
         });
     });
+}
+
+
+// ===============================
+// PLAYLIST AUTO-REFRESH SETTINGS
+// ===============================
+let playlistRefreshTimer = null;
+
+function setupPlaylistRefresh() {
+    if (playlistRefreshTimer) {
+        clearInterval(playlistRefreshTimer);
+        playlistRefreshTimer = null;
+    }
+
+    chrome.storage.local.get(["enablePlaylistAutoRefresh", "playlistRefreshInterval"], (res) => {
+        const enabled = res.enablePlaylistAutoRefresh ?? false;
+        const intervalMins = res.playlistRefreshInterval || 10;
+        
+        if (enabled && intervalMins > 0) {
+            console.log(`Setting up playlist auto-refresh every ${intervalMins} minutes.`);
+            playlistRefreshTimer = setInterval(() => {
+                console.log("Auto-refreshing playlist...");
+                loadPlaylist(currentMood, language, true);
+            }, intervalMins * 60 * 1000);
+        }
+    });
+}
+
+if (autoRefreshToggle && autoRefreshContainer && autoRefreshSlider && autoRefreshValueText) {
+    chrome.storage.local.get(["enablePlaylistAutoRefresh", "playlistRefreshInterval"], (res) => {
+        const enabled = res.enablePlaylistAutoRefresh ?? false;
+        const interval = res.playlistRefreshInterval || 10;
+
+        autoRefreshToggle.checked = enabled;
+        autoRefreshContainer.style.display = enabled ? "block" : "none";
+        autoRefreshSlider.value = interval;
+        autoRefreshValueText.textContent = interval;
+    });
+
+    autoRefreshToggle.onchange = () => {
+        const enabled = autoRefreshToggle.checked;
+        chrome.storage.local.set({ enablePlaylistAutoRefresh: enabled });
+        autoRefreshContainer.style.display = enabled ? "block" : "none";
+        setupPlaylistRefresh();
+    };
+
+    autoRefreshSlider.oninput = () => {
+        const interval = Number(autoRefreshSlider.value);
+        autoRefreshValueText.textContent = interval;
+        chrome.storage.local.set({ playlistRefreshInterval: interval });
+        setupPlaylistRefresh();
+    };
 }
 
 
@@ -1439,4 +1892,17 @@ window.addEventListener("DOMContentLoaded", () => {
     
     // Periodically sync status
     setInterval(checkSpotifyStatus, 10000);
+});
+
+// Listen for player controls from background notifications
+chrome.runtime.onMessage.addListener((msg) => {
+    if (msg.action === "playerControl") {
+        if (msg.command === "togglePlay") {
+            const btn = document.getElementById("playBtn");
+            if (btn) btn.click();
+        } else if (msg.command === "nextSong") {
+            const btn = document.getElementById("nextBtn");
+            if (btn) btn.click();
+        }
+    }
 });

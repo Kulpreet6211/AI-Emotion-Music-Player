@@ -184,6 +184,36 @@
         <span class="slider-toggle"></span>
       </label>
     </div>
+
+    <div class="setting-row timer-section" id="notificationTimerContainer" style="margin-top: 12px;">
+      <span>Notification Interval</span>
+      <input type="range" id="timeSlider" min="1" max="60" value="5">
+      <p style="font-size: 12px; opacity: 0.8; margin-top: 4px;">
+        Show rescan notification every <strong><span id="timeValue">5</span></strong> minutes
+      </p>
+    </div>
+  </div>
+
+  <!-- ================= PLAYLIST REFRESH ================= -->
+  <div class="card settings-card">
+    <h3>🔄 Playlist Auto-Refresh</h3>
+
+    <div class="setting-row">
+      <span>Enable Auto-Refresh</span>
+
+      <label class="switch">
+        <input type="checkbox" id="enableAutoRefresh">
+        <span class="slider-toggle"></span>
+      </label>
+    </div>
+
+    <div class="setting-row timer-section" id="autoRefreshIntervalContainer" style="margin-top: 12px;">
+      <span>Refresh Interval</span>
+      <input type="range" id="refreshIntervalSlider" min="1" max="60" value="10">
+      <p style="font-size: 12px; opacity: 0.8; margin-top: 4px;">
+        Refresh song list every <strong><span id="refreshIntervalValue">10</span></strong> minutes
+      </p>
+    </div>
   </div>
 
 
